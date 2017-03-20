@@ -5,6 +5,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -49,10 +50,26 @@ public class ProducerSamples {
 		MessageProducer producer = session.createProducer(destination);
 		//持久化DeliveryMode.PERSISTENT
 		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-		for (int i = 0; i < 10; i++) {
+		/*for (int i = 0; i < 10; i++) {
 			TextMessage message = session.createTextMessage();
 			message.setText("我是第："+i+"个的内容 ！！");
-			producer.send(message);
+			//producer.send(message);
+			 * producer.send(destination,//目的地
+						message, //消息
+						DeliveryMode.NON_PERSISTENT, //是否持久
+						1,//优先级
+						1000*60);//消息保存时间
+			System.out.println(message.toString());
+		}*/
+		for (int i = 0; i < 10; i++) {
+			MapMessage message = session.createMapMessage();
+			message.setInt("id", 1);
+			message.setString("name", "name");
+			producer.send(destination,//目的地
+						message, //消息
+						DeliveryMode.NON_PERSISTENT, //是否持久
+						1,//优先级
+						1000*60);//消息保存时间
 			System.out.println(message.toString());
 		}
 		//session.commit();//配置事务后需要使用commit方法才能提交到QUEUE
